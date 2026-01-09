@@ -1,3 +1,7 @@
+console.log('Server starting...');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('PORT:', process.env.PORT);
+
 const { createServer } = require('http')
 const { parse } = require('url')
 const next = require('next')
