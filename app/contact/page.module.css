@@ -1,0 +1,122 @@
+.section {
+    padding: 4rem 0;
+    min-height: 80vh;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4rem;
+    margin-top: 2rem;
+}
+
+.infoSection h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: hsl(var(--foreground));
+}
+
+.infoSection p {
+    color: hsl(var(--muted-foreground));
+    margin-bottom: 2rem;
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.detailItem {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.detailItem svg {
+    color: hsl(var(--primary));
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+}
+
+.detailContent h3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.25rem;
+}
+
+.detailContent p {
+    margin: 0;
+}
+
+.formSection {
+    background: hsl(var(--card));
+    padding: 2rem;
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border));
+}
+
+.formTitle {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: hsl(var(--foreground));
+}
+
+.formGroup {
+    margin-bottom: 1rem;
+}
+
+.label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: hsl(var(--foreground));
+}
+
+.input,
+.textarea {
+    width: 100%;
+    padding: 0.75rem;
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    color: hsl(var(--foreground));
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.input:focus,
+.textarea:focus {
+    outline: none;
+    border-color: hsl(var(--primary));
+}
+
+.textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.formStatusError {
+    color: #b91c1c;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.formStatusSuccess {
+    color: #15803d;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}

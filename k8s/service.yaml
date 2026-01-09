@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sketchcabs-web
+  namespace: sketchcabs
+  labels:
+    app: sketchcabs-web
+spec:
+  type: ClusterIP
+  selector:
+    app: sketchcabs-web
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+      name: http

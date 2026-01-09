@@ -1,0 +1,150 @@
+.section {
+    padding: 6rem 0;
+    background-color: hsl(var(--background));
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: hsl(var(--foreground));
+}
+
+.googleBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: hsl(var(--card));
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem;
+    border: 1px solid hsl(var(--border));
+    margin-bottom: 1.5rem;
+}
+
+.googleLogo {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.googleLogo span:nth-child(1) {
+    color: #4285F4;
+}
+
+.googleLogo span:nth-child(2) {
+    color: #EA4335;
+}
+
+.googleLogo span:nth-child(3) {
+    color: #FBBC05;
+}
+
+.googleLogo span:nth-child(4) {
+    color: #4285F4;
+}
+
+.googleLogo span:nth-child(5) {
+    color: #34A853;
+}
+
+.googleLogo span:nth-child(6) {
+    color: #EA4335;
+}
+
+.ratingText {
+    font-size: 1rem;
+    color: hsl(var(--foreground));
+    font-weight: 600;
+}
+
+.stars {
+    display: flex;
+    gap: 2px;
+}
+
+.subtitle {
+    color: hsl(var(--muted-foreground));
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.cardStars {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 2px;
+}
+
+.quote {
+    font-size: 1rem;
+    color: hsl(var(--foreground));
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: hsl(var(--primary) / 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: hsl(var(--primary));
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+}
+
+.name {
+    font-weight: 700;
+    color: hsl(var(--foreground));
+    font-size: 1rem;
+}
+
+.location {
+    font-size: 0.8rem;
+    color: hsl(var(--muted-foreground));
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

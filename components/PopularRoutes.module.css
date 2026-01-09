@@ -1,0 +1,120 @@
+.section {
+    padding: 6rem 0;
+    background: hsl(var(--background));
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: hsl(var(--foreground));
+}
+
+.subtitle {
+    color: hsl(var(--muted-foreground));
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.card:hover {
+    border-color: hsl(var(--primary));
+    transform: translateX(5px);
+}
+
+.routeInfo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.routeIcon {
+    width: 48px;
+    height: 48px;
+    background: hsl(var(--primary) / 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: hsl(var(--primary));
+}
+
+.routeText {
+    display: flex;
+    flex-direction: column;
+}
+
+.routeName {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: hsl(var(--foreground));
+}
+
+.routeDistance {
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+}
+
+.routePrice {
+    text-align: right;
+}
+
+.priceFrom {
+    font-size: 0.75rem;
+    color: hsl(var(--muted-foreground));
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: hsl(var(--primary));
+}
+
+.arrow {
+    color: hsl(var(--muted-foreground));
+    transition: transform 0.3s;
+}
+
+.card:hover .arrow {
+    transform: translateX(5px);
+    color: hsl(var(--primary));
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

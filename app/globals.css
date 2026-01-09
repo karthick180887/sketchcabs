@@ -1,0 +1,87 @@
+:root {
+  --background: 160 20% 6%;
+  /* Deep Dark with green undertone #0a100e */
+  --foreground: 150 5% 98%;
+  /* Clean White #f9fafb */
+
+  --card: 160 15% 10%;
+  /* Dark with subtle green #151d1a */
+  --card-foreground: 150 5% 98%;
+
+  --popover: 160 20% 6%;
+  --popover-foreground: 150 5% 98%;
+
+  --primary: 160 84% 39%;
+  /* Emerald Green #10b981 */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 160 12% 15%;
+  /* Dark Green-Grey */
+  --secondary-foreground: 150 5% 98%;
+
+  --muted: 160 12% 13%;
+  --muted-foreground: 160 8% 55%;
+
+  --accent: 160 84% 39%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 160 12% 20%;
+  --input: 160 12% 20%;
+  --ring: 160 84% 39%;
+
+  --radius: 0.5rem;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-inter), sans-serif;
+  scroll-behavior: smooth;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}
+
+/* Utilities */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
