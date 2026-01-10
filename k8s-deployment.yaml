@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sketchcabs
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sketchcabs
+  template:
+    metadata:
+      labels:
+        app: sketchcabs
+    spec:
+      containers:
+        - name: sketchcabs
+          image: ride-sharing/sketchcabs
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              # Trigger Tilt Update
+              value: "production"
+            - name: TELEGRAM_BOT_TOKEN
+              value: "8464695158:AAH7bJ3-hMmkOQtr2NdSHP5Q1WCghFxuM0c"
+            - name: TELEGRAM_CHAT_ID
+              value: "5026873095"
+            - name: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+              value: "AIzaSyAYjrbg1hQJYC4vOMvQS7C9lJ3TDWQSuFo"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sketchcabs
+  namespace: default
+spec:
+  selector:
+    app: sketchcabs
+  ports:
+    - port: 80
+      targetPort: 3000
+      name: http
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sketchcabs-ingress
+  # Trigger update
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - sketchcabs.com
+        - www.sketchcabs.com
+      secretName: sketchcabs-tls
+  rules:
+    - host: sketchcabs.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sketchcabs
+                port:
+                  number: 80
+    - host: www.sketchcabs.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sketchcabs
+                port:
+                  number: 80

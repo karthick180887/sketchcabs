@@ -15,34 +15,131 @@ const carRates: Record<string, { rate: number; minKm: number; bata: number }> = 
     'INNOVA CRYSTA': { rate: 25, minKm: 130, bata: 300 },
 };
 
+const roundTripRates: Record<string, { rate: number; minKm: number; bata: number }> = {
+    'MINI': { rate: 11, minKm: 250, bata: 300 },
+    'SEDAN': { rate: 12, minKm: 250, bata: 300 },
+    'ETIOS': { rate: 13, minKm: 250, bata: 300 },
+    'SUV': { rate: 16, minKm: 250, bata: 300 },
+    'INNOVA': { rate: 17, minKm: 250, bata: 300 },
+    'INNOVA CRYSTA': { rate: 20, minKm: 250, bata: 300 },
+};
+
+import { usePlacesWidget } from "react-google-autocomplete";
+
+declare const google: any;
+
+// ... existing imports
+
 const BookingWidget: React.FC = () => {
+    const [tripType, setTripType] = useState<'oneway' | 'roundtrip'>('oneway');
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [pickup, setPickup] = useState('');
     const [drop, setDrop] = useState('');
+    const [pickupPlace, setPickupPlace] = useState<any>(null);
+    const [dropPlace, setDropPlace] = useState<any>(null);
     const [date, setDate] = useState('');
+    const [returnDate, setReturnDate] = useState('');
     const [time, setTime] = useState('');
     const [carType, setCarType] = useState('SEDAN');
     const [distance, setDistance] = useState('');
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
+    const { ref: pickupRef } = usePlacesWidget({
+        apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+        onPlaceSelected: (place: any) => {
+            setPickup(place.formatted_address || '');
+            setPickupPlace(place);
+        },
+        options: {
+            types: ["(regions)"],
+            componentRestrictions: { country: "in" },
+            fields: ["geometry", "formatted_address"],
+        },
+    });
+
+    const { ref: dropRef } = usePlacesWidget({
+        apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+        onPlaceSelected: (place: any) => {
+            setDrop(place.formatted_address || '');
+            setDropPlace(place);
+        },
+        options: {
+            types: ["(regions)"],
+            componentRestrictions: { country: "in" },
+            fields: ["geometry", "formatted_address"],
+        },
+    });
+
+    React.useEffect(() => {
+        if (pickupPlace && dropPlace && pickupPlace.geometry && dropPlace.geometry) {
+            const service = new google.maps.DistanceMatrixService();
+            service.getDistanceMatrix({
+                origins: [pickupPlace.geometry.location],
+                destinations: [dropPlace.geometry.location],
+                travelMode: google.maps.TravelMode.DRIVING,
+            }, (response: any, status: any) => {
+                if (status === 'OK' && response?.rows[0]?.elements[0]?.status === 'OK') {
+                    const distanceInMeters = response.rows[0].elements[0].distance.value;
+                    const distanceInKm = (distanceInMeters / 1000).toFixed(0);
+                    setDistance(distanceInKm);
+                }
+            });
+        }
+    }, [pickupPlace, dropPlace]);
+
     const calculateFare = () => {
         const distanceKm = parseFloat(distance) || 0;
-        const car = carRates[carType];
-        const chargeableKm = Math.max(distanceKm, car.minKm);
-        const baseFare = chargeableKm * car.rate;
-        const additionalKm = Math.max(0, distanceKm - car.minKm);
-        const additionalFare = additionalKm > 0 ? additionalKm * car.rate : 0;
-        const total = baseFare + car.bata;
+        let car, chargeableKm, baseFare, bata, total;
 
-        return {
-            baseFare: Math.round(car.minKm * car.rate),
-            additionalFare: Math.round(additionalFare),
-            bata: car.bata,
-            total: Math.round(total),
-            chargeableKm: car.minKm
-        };
+        if (tripType === 'roundtrip') {
+            car = roundTripRates[carType] || roundTripRates['SEDAN'];
+
+            // Calculate days
+            let numDays = 1;
+            if (date && returnDate) {
+                const start = new Date(date);
+                const end = new Date(returnDate);
+                const diffTime = Math.abs(end.getTime() - start.getTime());
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                numDays = diffDays < 1 ? 1 : diffDays + 1; // Include start day
+            }
+
+            const minKmTotal = car.minKm * numDays;
+            const roundTripDistance = distanceKm * 2;
+            chargeableKm = Math.max(roundTripDistance, minKmTotal);
+            baseFare = chargeableKm * car.rate;
+            bata = car.bata * numDays;
+            total = baseFare + bata;
+
+            return {
+                baseFare,
+                bata,
+                total: Math.round(total),
+                chargeableKm,
+                numDays
+            };
+        } else {
+            car = carRates[carType];
+            chargeableKm = Math.max(distanceKm, car.minKm);
+            baseFare = chargeableKm * car.rate;
+            const additionalKm = Math.max(0, distanceKm - car.minKm);
+            const additionalFare = additionalKm > 0 ? additionalKm * car.rate : 0;
+            total = (chargeableKm * car.rate) + car.bata; // Simplified: base (min*rate) + additional + bata OR total_km * rate? 
+            // Existing logic: 
+            // baseFare = chargeableKm * car.rate;
+            // total = baseFare + car.bata;
+            // logic above seems to double count if strictly following previous code, let's stick to simple:
+            // total = (chargeable @ rate) + bata
+            return {
+                baseFare: Math.round(chargeableKm * car.rate),
+                additionalFare: 0, // Simplified for consistent return
+                bata: car.bata,
+                total: Math.round((chargeableKm * car.rate) + car.bata),
+                chargeableKm: car.minKm // Logic in display might use actual chargeable
+            };
+        }
     };
 
     const formatTime = (timeStr: string) => {
@@ -55,8 +152,16 @@ const BookingWidget: React.FC = () => {
     };
 
     const handleBook = async () => {
-        if (!name || !phone || !pickup || !drop) {
+        if (!name || !phone || !pickup || !drop || !date) {
             alert('Please fill in all required fields');
+            return;
+        }
+        if (phone.length !== 10 || !/^[0-9]{10}$/.test(phone)) {
+            alert('Please enter a valid 10-digit phone number');
+            return;
+        }
+        if (tripType === 'roundtrip' && !returnDate) {
+            alert('Please select a return date for round trip');
             return;
         }
 
@@ -69,11 +174,13 @@ const BookingWidget: React.FC = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    tripType,
                     name,
-                    phone,
+                    phone: '+91' + phone,
                     pickup,
                     drop,
                     date,
+                    returnDate: tripType === 'roundtrip' ? returnDate : null,
                     time: formatTime(time),
                     carType,
                     distance: distanceKm,
@@ -83,12 +190,20 @@ const BookingWidget: React.FC = () => {
 
             if (response.ok) {
                 setSuccess(true);
-                // Reset form optionally
-                // setName(''); setPhone(''); ...
+                // Reset form
+                setName('');
+                setPhone('');
+                setPickup('');
+                setDrop('');
+                setDate('');
+                setReturnDate('');
+                setTime('');
+                setDistance('');
+                setTimeout(() => setSuccess(false), 5000); // Hide after 5 seconds
             } else {
                 const errorData = await response.json();
                 console.error('Booking Error:', errorData);
-                alert(`Error: ${errorData.error || 'Something went wrong'}. ${errorData.details ? JSON.stringify(errorData.details) : ''}`);
+                alert(`Error: ${errorData.error || 'Something went wrong'}.`);
             }
         } catch (error) {
             console.error('Failed to send Telegram notification', error);
@@ -100,21 +215,28 @@ const BookingWidget: React.FC = () => {
 
     if (success) {
         return (
-            <div className={styles.widget} style={{ alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
-                <div style={{ textAlign: 'center', padding: '2rem' }}>
-                    <CheckCircle2 size={64} className="text-green-500 mb-4 mx-auto" style={{ color: '#22c55e' }} />
-                    <h3 className={styles.headerTitle} style={{ marginBottom: '1rem' }}>Booking Request Sent!</h3>
-                    <p className={styles.headerSubtitle}>
-                        Thank you, {name}. We have received your request and will contact you shortly at {phone}.
+            <div className={styles.widget} style={{ justifyContent: 'center', alignItems: 'center', minHeight: '400px', display: 'flex' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '24px' }}>
+                    <CheckCircle2 size={64} style={{ color: '#22c55e', marginBottom: '16px' }} />
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#000000', marginBottom: '8px' }}>Booking Requested!</h3>
+                    <p style={{ color: '#000000' }}>
+                        Thank you. We have received your booking request. Our team will contact you shortly to confirm.
                     </p>
-                    <Button
+                    <button
                         onClick={() => setSuccess(false)}
-                        variant="primary"
-                        size="md"
-                        style={{ marginTop: '2rem' }}
+                        style={{
+                            marginTop: '24px',
+                            padding: '8px 16px',
+                            backgroundColor: '#f3f4f6',
+                            color: '#000000',
+                            borderRadius: '8px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontWeight: '500'
+                        }}
                     >
                         Book Another Trip
-                    </Button>
+                    </button>
                 </div>
             </div>
         );
@@ -123,8 +245,47 @@ const BookingWidget: React.FC = () => {
     return (
         <div className={styles.widget}>
             <div className={styles.header}>
-                <h3 className={styles.headerTitle}>Book Your One-Way Cab</h3>
+                <h3 className={styles.headerTitle}>Book You Cab</h3>
                 <p className={styles.headerSubtitle}>Get instant fare estimate</p>
+            </div>
+
+            <div style={{ display: 'flex', background: 'linear-gradient(to right, #f3f4f6, #e5e7eb)', padding: '6px', borderRadius: '12px', marginBottom: '16px', marginLeft: '16px', marginRight: '16px' }}>
+                <button
+                    style={{
+                        flex: 1,
+                        padding: '10px 16px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s',
+                        background: tripType === 'oneway' ? 'linear-gradient(to right, #facc15, #eab308)' : 'transparent',
+                        color: tripType === 'oneway' ? '#000' : '#4b5563',
+                        boxShadow: tripType === 'oneway' ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
+                    }}
+                    onClick={() => setTripType('oneway')}
+                >
+                    One Way
+                </button>
+                <button
+                    style={{
+                        flex: 1,
+                        padding: '10px 16px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s',
+                        background: tripType === 'roundtrip' ? 'linear-gradient(to right, #facc15, #eab308)' : 'transparent',
+                        color: tripType === 'roundtrip' ? '#000' : '#4b5563',
+                        boxShadow: tripType === 'roundtrip' ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
+                    }}
+                    onClick={() => setTripType('roundtrip')}
+                >
+                    Round Trip
+                </button>
             </div>
 
             <div className={styles.row}>
@@ -144,14 +305,19 @@ const BookingWidget: React.FC = () => {
 
                 <div className={styles.field}>
                     <label className={styles.label}>Phone</label>
-                    <div className={styles.inputGroup}>
-                        <Phone size={16} className={styles.icon} />
+                    <div className={styles.inputGroup} style={{ display: 'flex', alignItems: 'center', padding: '0.6rem 1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '0.5rem' }}>
+                        <Phone size={16} style={{ color: 'hsl(160, 84%, 39%)', marginRight: '8px', flexShrink: 0 }} />
+                        <span style={{ color: '#374151', fontWeight: '500', fontSize: '14px', marginRight: '4px' }}>+91</span>
                         <input
                             type="tel"
-                            className={styles.input}
-                            placeholder="+91 9876543210"
+                            style={{ border: 'none', outline: 'none', background: 'transparent', flex: 1, fontSize: '0.85rem', color: '#0f172a', padding: 0 }}
+                            placeholder="9876543210"
                             value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
+                            maxLength={10}
+                            onChange={(e) => {
+                                const val = e.target.value.replace(/\D/g, '');
+                                if (val.length <= 10) setPhone(val);
+                            }}
                         />
                     </div>
                 </div>
@@ -162,6 +328,7 @@ const BookingWidget: React.FC = () => {
                 <div className={styles.inputGroup}>
                     <MapPin size={16} className={styles.icon} />
                     <input
+                        ref={pickupRef}
                         type="text"
                         className={styles.input}
                         placeholder="e.g. Salem, Tamil Nadu"
@@ -176,6 +343,7 @@ const BookingWidget: React.FC = () => {
                 <div className={styles.inputGroup}>
                     <MapPin size={16} className={styles.icon} />
                     <input
+                        ref={dropRef}
                         type="text"
                         className={styles.input}
                         placeholder="e.g. Chennai Airport"
@@ -198,7 +366,21 @@ const BookingWidget: React.FC = () => {
                         />
                     </div>
                 </div>
-
+                {tripType === 'roundtrip' && (
+                    <div className={styles.field}>
+                        <label className={styles.label}>Return Date</label>
+                        <div className={styles.inputGroup}>
+                            <Calendar size={16} className={styles.icon} />
+                            <input
+                                type="date"
+                                className={styles.input}
+                                value={returnDate}
+                                min={date}
+                                onChange={(e) => setReturnDate(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                )}
                 <div className={styles.field}>
                     <label className={styles.label}>Time</label>
                     <div className={styles.inputGroup}>
@@ -216,10 +398,10 @@ const BookingWidget: React.FC = () => {
             <div className={styles.row}>
                 <div className={styles.field}>
                     <label className={styles.label}>Car Type</label>
-                    <div className={styles.inputGroup}>
-                        <Car size={16} className={styles.icon} />
+                    <div className={styles.inputGroup} style={{ display: 'flex', alignItems: 'center', padding: '0.6rem 1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '0.5rem' }}>
+                        <Car size={16} style={{ color: 'hsl(160, 84%, 39%)', marginRight: '8px', flexShrink: 0 }} />
                         <select
-                            className={styles.input}
+                            style={{ border: 'none', outline: 'none', background: 'transparent', flex: 1, fontSize: '0.85rem', color: '#0f172a', padding: 0, cursor: 'pointer' }}
                             value={carType}
                             onChange={(e) => setCarType(e.target.value)}
                         >
@@ -248,22 +430,26 @@ const BookingWidget: React.FC = () => {
                 </div>
             </div>
 
-            {distance && parseFloat(distance) > 0 && (
-                <div className={styles.farePreview}>
-                    <div className={styles.fareRow}>
-                        <span>Base Rate ({calculateFare().chargeableKm}km)</span>
-                        <span>₹{calculateFare().baseFare}</span>
+            {
+                distance && parseFloat(distance) > 0 && (
+                    <div className={styles.farePreview}>
+                        <div className={styles.fareRow}>
+                            <span>Rate ({tripType === 'roundtrip' ? `${calculateFare().chargeableKm}km` : `${calculateFare().chargeableKm || 0}km min`})</span>
+                            <span>₹{calculateFare().baseFare}</span>
+                        </div>
+                        <div className={styles.fareRow}>
+                            <span>Driver Bata {tripType === 'roundtrip' ? `(${calculateFare().numDays} days)` : ''}</span>
+                            <span>₹{calculateFare().bata}</span>
+                        </div>
+                        <div className={styles.fareTotal}>
+                            <span>Total Amount</span>
+                            <span>₹{calculateFare().total}</span>
+                        </div>
                     </div>
-                    <div className={styles.fareRow}>
-                        <span>Driver Bata</span>
-                        <span>₹{calculateFare().bata}</span>
-                    </div>
-                    <div className={styles.fareTotal}>
-                        <span>Total Amount</span>
-                        <span>₹{calculateFare().total}</span>
-                    </div>
-                </div>
-            )}
+                )
+            }
+            {/* Submit Button */}
+
 
             <div className={styles.submitButton}>
                 <Button
@@ -282,7 +468,7 @@ const BookingWidget: React.FC = () => {
                     )}
                 </Button>
             </div>
-        </div>
+        </div >
     );
 };
 

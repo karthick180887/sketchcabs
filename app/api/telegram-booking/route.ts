@@ -9,6 +9,8 @@ type BookingPayload = {
     pickup?: string;
     drop?: string;
     date?: string;
+    tripType?: string;
+    returnDate?: string;
     time?: string;
     carType?: string;
     distance?: number | string;
@@ -66,10 +68,12 @@ export async function POST(request: Request) {
 
         const distanceKm = safeNumber(body.distance);
         const distanceText = distanceKm === null ? 'N/A' : `${distanceKm} km`;
+        const tripType = body.tripType === 'roundtrip' ? '🔄 Round Trip' : '➡️ One Way';
 
         const messageLines = [
-            'New Booking Request',
+            '🚖 New Booking Request 🚖',
             '',
+            `Type: ${tripType}`,
             `Customer: ${safeText(body.name)}`,
             `Phone: ${safeText(body.phone)}`,
             '',
@@ -77,6 +81,7 @@ export async function POST(request: Request) {
             `Drop: ${safeText(body.drop)}`,
             '',
             `Date: ${safeText(body.date)}`,
+            ...(body.tripType === 'roundtrip' ? [`Return Date: ${safeText(body.returnDate)}`] : []),
             `Time: ${safeText(body.time)}`,
             `Car: ${safeText(body.carType)}`,
             `Distance: ${distanceText}`,
@@ -88,27 +93,44 @@ export async function POST(request: Request) {
         const message = messageLines.join('\n');
 
         const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-        // Log environment (safely)
         console.log(`Sending to Telegram. Token present: ${!!TELEGRAM_BOT_TOKEN}, ChatID: ${TELEGRAM_CHAT_ID}`);
 
-        const response = await fetch(telegramUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text: message,
-            }),
-        });
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-        const data = await response.json();
+        try {
+            const response = await fetch(telegramUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: 'Markdown', // Enable markdown
+                }),
+                signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
 
-        if (!data.ok) {
-            console.error('Telegram API Error:', data);
+            const data = await response.json();
+
+            if (!data.ok) {
+                console.error('Telegram API Error Response:', data);
+                return NextResponse.json(
+                    { error: 'Failed to send notification to Telegram', details: data },
+                    { status: 500 }
+                );
+            }
+
+            console.log('Telegram notification sent successfully');
+            return NextResponse.json({ success: true });
+        } catch (fetchError) {
+            clearTimeout(timeoutId);
+            console.error('Telegram Fetch Error:', fetchError);
             return NextResponse.json(
-                { error: 'Failed to send notification to Telegram', details: data },
-                { status: 500 }
+                { error: 'Network error sending to Telegram', details: String(fetchError) },
+                { status: 504 }
             );
         }
 

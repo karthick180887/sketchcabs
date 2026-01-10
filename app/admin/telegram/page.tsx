@@ -7,6 +7,7 @@ import styles from './page.module.css';
 type ConfigResponse = {
     tokenPresent: boolean;
     chatIdPresent: boolean;
+    googleMapsKeyPresent: boolean;
 };
 
 type StatusState = 'idle' | 'loading' | 'success' | 'error';
@@ -31,6 +32,7 @@ export default function TelegramConfigPage() {
             setData({
                 tokenPresent: Boolean(payload.tokenPresent),
                 chatIdPresent: Boolean(payload.chatIdPresent),
+                googleMapsKeyPresent: Boolean(payload.googleMapsKeyPresent),
             });
             setCheckedAt(new Date().toLocaleString());
             setStatus('success');
@@ -82,6 +84,12 @@ export default function TelegramConfigPage() {
                         <span className={styles.label}>TELEGRAM_CHAT_ID</span>
                         <span className={`${styles.badge} ${getBadgeClass(data?.chatIdPresent)}`}>
                             {getBadgeText(data?.chatIdPresent)}
+                        </span>
+                    </div>
+                    <div className={styles.row}>
+                        <span className={styles.label}>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</span>
+                        <span className={`${styles.badge} ${getBadgeClass(data?.googleMapsKeyPresent)}`}>
+                            {getBadgeText(data?.googleMapsKeyPresent)}
                         </span>
                     </div>
                 </div>
