@@ -1,0 +1,126 @@
+.page {
+    min-height: 100vh;
+    padding: 3.5rem 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.card {
+    width: 100%;
+    max-width: 720px;
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 1.25rem;
+    padding: 2rem;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.kicker {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: hsl(var(--foreground));
+}
+
+.subtitle {
+    color: hsl(var(--muted-foreground));
+    line-height: 1.6;
+}
+
+.panel {
+    margin-top: 1.5rem;
+    background: hsl(var(--secondary));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.9rem;
+    padding: 0.5rem 1.25rem;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid hsl(var(--border));
+}
+
+.row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+}
+
+.badge {
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: 1px solid transparent;
+}
+
+.ok {
+    background: hsl(var(--primary) / 0.2);
+    color: hsl(var(--primary));
+    border-color: hsl(var(--primary));
+}
+
+.missing {
+    background: hsl(var(--destructive) / 0.2);
+    color: hsl(var(--destructive));
+    border-color: hsl(var(--destructive));
+}
+
+.pending {
+    background: hsl(var(--muted) / 0.4);
+    color: hsl(var(--muted-foreground));
+    border-color: hsl(var(--border));
+}
+
+.note {
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    color: hsl(var(--muted-foreground));
+}
+
+.error {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: hsl(var(--destructive));
+}
+
+.actions {
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .card {
+        padding: 1.5rem;
+    }
+
+    .title {
+        font-size: 1.6rem;
+    }
+
+    .row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
