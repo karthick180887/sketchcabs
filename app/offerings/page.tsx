@@ -16,7 +16,6 @@ const oneWayFleet = [
         seats: 4,
         luggage: 0,
         price: '₹12',
-        bata: '₹300',
         description: oneWayTermText
     },
     {
@@ -26,7 +25,6 @@ const oneWayFleet = [
         seats: 4,
         luggage: 3,
         price: '₹13',
-        bata: '₹300',
         description: oneWayTermText
     },
     {
@@ -36,7 +34,6 @@ const oneWayFleet = [
         seats: 5,
         luggage: 3,
         price: '₹14',
-        bata: '₹300',
         description: oneWayTermText
     },
     {
@@ -46,7 +43,6 @@ const oneWayFleet = [
         seats: 5,
         luggage: 0,
         price: '₹14',
-        bata: '₹300',
         description: oneWayTermText
     },
     {
@@ -56,7 +52,6 @@ const oneWayFleet = [
         seats: 8,
         luggage: 4,
         price: '₹18',
-        bata: '₹300',
         description: oneWayTermText
     },
     {
@@ -66,7 +61,6 @@ const oneWayFleet = [
         seats: 7,
         luggage: 4,
         price: '₹19',
-        bata: '₹300',
         description: oneWayTermText
     },
     {
@@ -76,7 +70,6 @@ const oneWayFleet = [
         seats: 7,
         luggage: 4,
         price: '₹25',
-        bata: '₹300',
         description: oneWayTermText
     },
 ];
@@ -89,7 +82,6 @@ const roundTripFleet = [
         seats: 4,
         luggage: 0,
         price: '₹11',
-        bata: '₹300',
         description: roundTripTermText
     },
     {
@@ -99,7 +91,6 @@ const roundTripFleet = [
         seats: 4,
         luggage: 3,
         price: '₹12',
-        bata: '₹300',
         description: roundTripTermText
     },
     {
@@ -109,7 +100,6 @@ const roundTripFleet = [
         seats: 5,
         luggage: 3,
         price: '₹13',
-        bata: '₹300',
         description: roundTripTermText
     },
     {
@@ -119,7 +109,6 @@ const roundTripFleet = [
         seats: 5,
         luggage: 0,
         price: '₹13',
-        bata: '₹300',
         description: roundTripTermText
     },
     {
@@ -129,7 +118,6 @@ const roundTripFleet = [
         seats: 8,
         luggage: 4,
         price: '₹16',
-        bata: '₹300',
         description: roundTripTermText
     },
     {
@@ -139,7 +127,6 @@ const roundTripFleet = [
         seats: 7,
         luggage: 4,
         price: '₹17',
-        bata: '₹300',
         description: roundTripTermText
     },
     {
@@ -149,7 +136,6 @@ const roundTripFleet = [
         seats: 7,
         luggage: 4,
         price: '₹20',
-        bata: '₹300',
         description: roundTripTermText
     },
 ];

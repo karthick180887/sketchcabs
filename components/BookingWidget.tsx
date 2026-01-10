@@ -210,9 +210,18 @@ const BookingWidget: React.FC = () => {
         }
     };
 
-    if (success) {
-        return (
-            <div className={styles.widget} style={{ justifyContent: 'center', alignItems: 'center', minHeight: '400px', display: 'flex' }}>
+    return (
+        <div className={styles.widget}>
+            <div
+                style={{
+                    display: success ? 'flex' : 'none',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '400px',
+                }}
+                role="status"
+                aria-live="polite"
+            >
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '24px' }}>
                     <CheckCircle2 size={64} style={{ color: '#22c55e', marginBottom: '16px' }} />
                     <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#000000', marginBottom: '8px' }}>Booking Requested!</h3>
@@ -236,54 +245,51 @@ const BookingWidget: React.FC = () => {
                     </button>
                 </div>
             </div>
-        );
-    }
 
-    return (
-        <div className={styles.widget}>
-            <div className={styles.header}>
-                <h3 className={styles.headerTitle}>Book Your Cab</h3>
-                <p className={styles.headerSubtitle}>Share your trip details</p>
-            </div>
+            <div style={{ display: success ? 'none' : 'block' }}>
+                <div className={styles.header}>
+                    <h3 className={styles.headerTitle}>Book Your Cab</h3>
+                    <p className={styles.headerSubtitle}>Share your trip details</p>
+                </div>
 
-            <div style={{ display: 'flex', background: 'linear-gradient(to right, #f3f4f6, #e5e7eb)', padding: '6px', borderRadius: '12px', marginBottom: '16px', marginLeft: '16px', marginRight: '16px' }}>
-                <button
-                    style={{
-                        flex: 1,
-                        padding: '10px 16px',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        border: 'none',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s',
-                        background: tripType === 'oneway' ? 'linear-gradient(to right, #facc15, #eab308)' : 'transparent',
-                        color: tripType === 'oneway' ? '#000' : '#4b5563',
-                        boxShadow: tripType === 'oneway' ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
-                    }}
-                    onClick={() => setTripType('oneway')}
-                >
-                    One Way
-                </button>
-                <button
-                    style={{
-                        flex: 1,
-                        padding: '10px 16px',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        border: 'none',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s',
-                        background: tripType === 'roundtrip' ? 'linear-gradient(to right, #facc15, #eab308)' : 'transparent',
-                        color: tripType === 'roundtrip' ? '#000' : '#4b5563',
-                        boxShadow: tripType === 'roundtrip' ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
-                    }}
-                    onClick={() => setTripType('roundtrip')}
-                >
-                    Round Trip
-                </button>
-            </div>
+                <div style={{ display: 'flex', background: 'linear-gradient(to right, #f3f4f6, #e5e7eb)', padding: '6px', borderRadius: '12px', marginBottom: '16px', marginLeft: '16px', marginRight: '16px' }}>
+                    <button
+                        style={{
+                            flex: 1,
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s',
+                            background: tripType === 'oneway' ? 'linear-gradient(to right, #facc15, #eab308)' : 'transparent',
+                            color: tripType === 'oneway' ? '#000' : '#4b5563',
+                            boxShadow: tripType === 'oneway' ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
+                        }}
+                        onClick={() => setTripType('oneway')}
+                    >
+                        One Way
+                    </button>
+                    <button
+                        style={{
+                            flex: 1,
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s',
+                            background: tripType === 'roundtrip' ? 'linear-gradient(to right, #facc15, #eab308)' : 'transparent',
+                            color: tripType === 'roundtrip' ? '#000' : '#4b5563',
+                            boxShadow: tripType === 'roundtrip' ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
+                        }}
+                        onClick={() => setTripType('roundtrip')}
+                    >
+                        Round Trip
+                    </button>
+                </div>
 
             <div className={styles.row}>
                 <div className={styles.field}>
@@ -428,22 +434,23 @@ const BookingWidget: React.FC = () => {
             </div>
 
             {/* Submit Button */}
-            <div className={styles.submitButton}>
-                <Button
-                    onClick={handleBook}
-                    size="lg"
-                    style={{ width: '100%', height: '52px', fontSize: '1rem' }}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <>
-                            <Loader2 className="animate-spin mr-2" size={20} />
-                            Sending...
-                        </>
-                    ) : (
-                        'Send Booking Request'
-                    )}
-                </Button>
+                <div className={styles.submitButton}>
+                    <Button
+                        onClick={handleBook}
+                        size="lg"
+                        style={{ width: '100%', height: '52px', fontSize: '1rem' }}
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <>
+                                <Loader2 className="animate-spin mr-2" size={20} />
+                                Sending...
+                            </>
+                        ) : (
+                            'Send Booking Request'
+                        )}
+                    </Button>
+                </div>
             </div>
         </div >
     );

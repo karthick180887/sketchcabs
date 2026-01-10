@@ -8,10 +8,6 @@ const questions = [
         a: 'No, toll fees, parking charges, and permit fees (for interstate travel) are extra and must be paid by the customer directly as per actuals.',
     },
     {
-        q: 'What is Driver Bata?',
-        a: 'Driver Bata is a daily allowance paid to the driver for food and other expenses. Our standard bata is ₹300 per day, applicable for all vehicle types.',
-    },
-    {
         q: 'Do you provide cabs for one-way drops?',
         a: 'Yes! We specialize in one-way taxi services. You only pay for the distance traveled from pickup to drop, without any return fare liability.',
     },

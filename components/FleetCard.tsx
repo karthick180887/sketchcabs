@@ -10,11 +10,10 @@ interface FleetProps {
     seats: number;
     luggage: number;
     price: string;
-    bata: string;
     description: string;
 }
 
-const FleetCard: React.FC<FleetProps> = ({ name, type, fuel, seats, luggage, price, bata, description }) => {
+const FleetCard: React.FC<FleetProps> = ({ name, type, fuel, seats, luggage, price, description }) => {
     return (
         <div className={styles.card}>
             <div className={styles.header}>
@@ -27,10 +26,6 @@ const FleetCard: React.FC<FleetProps> = ({ name, type, fuel, seats, luggage, pri
                     <div className={styles.priceItem}>
                         <span className={styles.priceLabel}>Rate (per km)</span>
                         <span className={styles.priceValue}>{price}</span>
-                    </div>
-                    <div className={styles.priceItem}>
-                        <span className={styles.priceLabel}>Driver Beta</span>
-                        <span className={styles.priceValue}>{bata}</span>
                     </div>
                 </div>
 
