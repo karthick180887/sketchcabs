@@ -73,30 +73,33 @@ const BookingWidget: React.FC = () => {
     });
 
     React.useEffect(() => {
-        if (pickupPlace && dropPlace && pickupPlace.geometry && dropPlace.geometry) {
-            const service = new google.maps.DistanceMatrixService();
-            service.getDistanceMatrix({
-                origins: [pickupPlace.geometry.location],
-                destinations: [dropPlace.geometry.location],
-                travelMode: google.maps.TravelMode.DRIVING,
-            }, (response: any, status: any) => {
-                if (status === 'OK' && response?.rows[0]?.elements[0]?.status === 'OK') {
-                    const distanceInMeters = response.rows[0].elements[0].distance.value;
-                    const distanceInKm = (distanceInMeters / 1000).toFixed(0);
-                    setDistance(distanceInKm);
-                }
-            });
+        if (!pickupPlace || !dropPlace || !pickupPlace.geometry || !dropPlace.geometry) {
+            return;
         }
+        if (typeof google === 'undefined' || !google?.maps?.DistanceMatrixService) {
+            return;
+        }
+
+        const service = new google.maps.DistanceMatrixService();
+        service.getDistanceMatrix({
+            origins: [pickupPlace.geometry.location],
+            destinations: [dropPlace.geometry.location],
+            travelMode: google.maps.TravelMode.DRIVING,
+        }, (response: any, status: any) => {
+            if (status === 'OK' && response?.rows[0]?.elements[0]?.status === 'OK') {
+                const distanceInMeters = response.rows[0].elements[0].distance.value;
+                const distanceInKm = (distanceInMeters / 1000).toFixed(0);
+                setDistance(distanceInKm);
+            }
+        });
     }, [pickupPlace, dropPlace]);
 
     const calculateFare = () => {
-        const distanceKm = parseFloat(distance) || 0;
-        let car, chargeableKm, baseFare, bata, total;
+        const distanceKm = Math.max(0, parseFloat(distance) || 0);
 
         if (tripType === 'roundtrip') {
-            car = roundTripRates[carType] || roundTripRates['SEDAN'];
+            const car = roundTripRates[carType] || roundTripRates['SEDAN'];
 
-            // Calculate days
             let numDays = 1;
             if (date && returnDate) {
                 const start = new Date(date);
@@ -108,38 +111,32 @@ const BookingWidget: React.FC = () => {
 
             const minKmTotal = car.minKm * numDays;
             const roundTripDistance = distanceKm * 2;
-            chargeableKm = Math.max(roundTripDistance, minKmTotal);
-            baseFare = chargeableKm * car.rate;
-            bata = car.bata * numDays;
-            total = baseFare + bata;
+            const chargeableKm = Math.max(roundTripDistance, minKmTotal);
+            const baseFare = chargeableKm * car.rate;
+            const bata = car.bata * numDays;
+            const total = baseFare + bata;
 
             return {
-                baseFare,
+                baseFare: Math.round(baseFare),
                 bata,
                 total: Math.round(total),
                 chargeableKm,
-                numDays
-            };
-        } else {
-            car = carRates[carType];
-            chargeableKm = Math.max(distanceKm, car.minKm);
-            baseFare = chargeableKm * car.rate;
-            const additionalKm = Math.max(0, distanceKm - car.minKm);
-            const additionalFare = additionalKm > 0 ? additionalKm * car.rate : 0;
-            total = (chargeableKm * car.rate) + car.bata; // Simplified: base (min*rate) + additional + bata OR total_km * rate? 
-            // Existing logic: 
-            // baseFare = chargeableKm * car.rate;
-            // total = baseFare + car.bata;
-            // logic above seems to double count if strictly following previous code, let's stick to simple:
-            // total = (chargeable @ rate) + bata
-            return {
-                baseFare: Math.round(chargeableKm * car.rate),
-                additionalFare: 0, // Simplified for consistent return
-                bata: car.bata,
-                total: Math.round((chargeableKm * car.rate) + car.bata),
-                chargeableKm: car.minKm // Logic in display might use actual chargeable
+                numDays,
             };
         }
+
+        const car = carRates[carType] || carRates['SEDAN'];
+        const chargeableKm = Math.max(distanceKm, car.minKm);
+        const baseFare = chargeableKm * car.rate;
+        const bata = car.bata;
+
+        return {
+            baseFare: Math.round(baseFare),
+            bata,
+            total: Math.round(baseFare + bata),
+            chargeableKm,
+            numDays: 1,
+        };
     };
 
     const formatTime = (timeStr: string) => {
@@ -245,8 +242,8 @@ const BookingWidget: React.FC = () => {
     return (
         <div className={styles.widget}>
             <div className={styles.header}>
-                <h3 className={styles.headerTitle}>Book You Cab</h3>
-                <p className={styles.headerSubtitle}>Get instant fare estimate</p>
+                <h3 className={styles.headerTitle}>Book Your Cab</h3>
+                <p className={styles.headerSubtitle}>Share your trip details</p>
             </div>
 
             <div style={{ display: 'flex', background: 'linear-gradient(to right, #f3f4f6, #e5e7eb)', padding: '6px', borderRadius: '12px', marginBottom: '16px', marginLeft: '16px', marginRight: '16px' }}>
@@ -405,12 +402,12 @@ const BookingWidget: React.FC = () => {
                             value={carType}
                             onChange={(e) => setCarType(e.target.value)}
                         >
-                            <option value="MINI">Mini (₹12/km)</option>
-                            <option value="SEDAN">Sedan (₹13/km)</option>
-                            <option value="ETIOS">Etios (₹14/km)</option>
-                            <option value="SUV">SUV (₹18/km)</option>
-                            <option value="INNOVA">Innova (₹19/km)</option>
-                            <option value="INNOVA CRYSTA">Innova Crysta (₹25/km)</option>
+                            <option value="MINI">Mini</option>
+                            <option value="SEDAN">Sedan</option>
+                            <option value="ETIOS">Etios</option>
+                            <option value="SUV">SUV</option>
+                            <option value="INNOVA">Innova</option>
+                            <option value="INNOVA CRYSTA">Innova Crysta</option>
                         </select>
                     </div>
                 </div>
@@ -430,27 +427,7 @@ const BookingWidget: React.FC = () => {
                 </div>
             </div>
 
-            {
-                distance && parseFloat(distance) > 0 && (
-                    <div className={styles.farePreview}>
-                        <div className={styles.fareRow}>
-                            <span>Rate ({tripType === 'roundtrip' ? `${calculateFare().chargeableKm}km` : `${calculateFare().chargeableKm || 0}km min`})</span>
-                            <span>₹{calculateFare().baseFare}</span>
-                        </div>
-                        <div className={styles.fareRow}>
-                            <span>Driver Bata {tripType === 'roundtrip' ? `(${calculateFare().numDays} days)` : ''}</span>
-                            <span>₹{calculateFare().bata}</span>
-                        </div>
-                        <div className={styles.fareTotal}>
-                            <span>Total Amount</span>
-                            <span>₹{calculateFare().total}</span>
-                        </div>
-                    </div>
-                )
-            }
             {/* Submit Button */}
-
-
             <div className={styles.submitButton}>
                 <Button
                     onClick={handleBook}
@@ -473,4 +450,3 @@ const BookingWidget: React.FC = () => {
 };
 
 export default BookingWidget;
-

@@ -33,6 +33,24 @@
     gap: 2rem;
 }
 
+.tariffGroup {
+    margin-bottom: 4rem;
+}
+
+.tariffTitle {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: hsl(var(--foreground));
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.tariffSubtitle {
+    color: hsl(var(--muted-foreground));
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
 .features {
     margin-top: 6rem;
     background-color: hsl(var(--secondary) / 0.3);

@@ -23,9 +23,9 @@ spec:
               # Trigger Tilt Update
               value: "production"
             - name: TELEGRAM_BOT_TOKEN
-              value: "8464695158:AAH7bJ3-hMmkOQtr2NdSHP5Q1WCghFxuM0c"
+              value: "8542140293:AAF68QNtTztpL-EmODlv4yUk2tixviGjPes"
             - name: TELEGRAM_CHAT_ID
-              value: "5026873095"
+              value: "6653840684"
             - name: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
               value: "AIzaSyAYjrbg1hQJYC4vOMvQS7C9lJ3TDWQSuFo"
           resources:

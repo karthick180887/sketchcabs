@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: 'Sketch Cabs | Premium One Way Drop Taxi',
   description: 'Reliable, affordable, and comfortable one-way drop taxi services. Book your ride today.',
   metadataBase: new URL('https://sketchcabs.com'),
+  verification: {
+    google: 'c-fBqRZ2UOACKFaKeYNf-JbV6jYO5NI679Isr63pq_w',
+  },
 };
 
 export default function RootLayout({

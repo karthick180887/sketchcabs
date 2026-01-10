@@ -42,6 +42,8 @@
     gap: 1rem;
     transition: all 0.3s;
     cursor: pointer;
+    color: inherit;
+    text-decoration: none;
 }
 
 .card:hover {
@@ -105,6 +107,11 @@
 .card:hover .arrow {
     transform: translateX(5px);
     color: hsl(var(--primary));
+}
+
+.card:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
 }
 
 @media (min-width: 768px) {

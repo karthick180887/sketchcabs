@@ -14,11 +14,6 @@ const routes = [
 ];
 
 const PopularRoutes: React.FC = () => {
-    const handleBookRoute = (from: string, to: string) => {
-        const message = `Hello, I want to book a cab from ${from} to ${to}`;
-        window.open(`https://wa.me/919500889142?text=${encodeURIComponent(message)}`, '_blank');
-    };
-
     return (
         <section className={styles.section}>
             <div className={styles.container}>
@@ -28,12 +23,19 @@ const PopularRoutes: React.FC = () => {
                 </div>
 
                 <div className={styles.grid}>
-                    {routes.map((route, index) => (
-                        <div
-                            key={index}
-                            className={styles.card}
-                            onClick={() => handleBookRoute(route.from, route.to)}
-                        >
+                    {routes.map((route, index) => {
+                        const message = `Hello, I want to book a cab from ${route.from} to ${route.to}`;
+                        const href = `https://wa.me/919500889142?text=${encodeURIComponent(message)}`;
+
+                        return (
+                            <a
+                                key={index}
+                                className={styles.card}
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={`Book a cab from ${route.from} to ${route.to} on WhatsApp`}
+                            >
                             <div className={styles.routeInfo}>
                                 <div className={styles.routeIcon}>
                                     <MapPin size={24} />
@@ -50,8 +52,9 @@ const PopularRoutes: React.FC = () => {
                             </div>
 
                             <ArrowRight className={styles.arrow} size={20} />
-                        </div>
-                    ))}
+                        </a>
+                        );
+                    })}
                 </div>
             </div>
         </section>

@@ -6,7 +6,7 @@ const features = [
     {
         icon: IndianRupee,
         title: 'Transparent Pricing',
-        description: 'No hidden costs. Pay only for one way drops. Toll and parking charges are billing separately and transparently.',
+        description: 'No hidden costs. Pay only for one way drops. Toll and parking charges are billed separately and transparently.',
     },
     {
         icon: Shield,

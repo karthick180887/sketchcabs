@@ -5,9 +5,10 @@ import ServiceCard from '@/components/ServiceCard';
 import FleetCard from '@/components/FleetCard';
 import { ArrowRight, Repeat, Map, Plane, ShieldCheck, Wallet } from 'lucide-react';
 
-const termText = "Toll fees, Inter-State Permit, Waiting charges, Parking Charges, Pet Charges, Hills Station charges (if any) are extra.";
+const oneWayTermText = 'Minimum 130 km per day. Toll fees, inter-state permit, waiting charges, parking charges, pet charges, hill station charges (if any) are extra.';
+const roundTripTermText = 'Minimum 250 km per day. Toll fees, inter-state permit, waiting charges, parking charges, pet charges, hill station charges (if any) are extra.';
 
-const fleet = [
+const oneWayFleet = [
     {
         name: 'Mini',
         type: 'Mini (3+1)',
@@ -16,7 +17,7 @@ const fleet = [
         luggage: 0,
         price: '₹12',
         bata: '₹300',
-        description: termText
+        description: oneWayTermText
     },
     {
         name: 'Sedan',
@@ -26,7 +27,7 @@ const fleet = [
         luggage: 3,
         price: '₹13',
         bata: '₹300',
-        description: termText
+        description: oneWayTermText
     },
     {
         name: 'Etios',
@@ -36,7 +37,7 @@ const fleet = [
         luggage: 3,
         price: '₹14',
         bata: '₹300',
-        description: termText
+        description: oneWayTermText
     },
     {
         name: 'Sedan (Non-CNG)',
@@ -46,7 +47,7 @@ const fleet = [
         luggage: 0,
         price: '₹14',
         bata: '₹300',
-        description: termText
+        description: oneWayTermText
     },
     {
         name: 'SUV',
@@ -56,7 +57,7 @@ const fleet = [
         luggage: 4,
         price: '₹18',
         bata: '₹300',
-        description: termText
+        description: oneWayTermText
     },
     {
         name: 'Innova',
@@ -66,7 +67,7 @@ const fleet = [
         luggage: 4,
         price: '₹19',
         bata: '₹300',
-        description: termText
+        description: oneWayTermText
     },
     {
         name: 'Innova Crysta',
@@ -76,7 +77,80 @@ const fleet = [
         luggage: 4,
         price: '₹25',
         bata: '₹300',
-        description: termText
+        description: oneWayTermText
+    },
+];
+
+const roundTripFleet = [
+    {
+        name: 'Mini',
+        type: 'Mini (3+1)',
+        fuel: 'Petrol',
+        seats: 4,
+        luggage: 0,
+        price: '₹11',
+        bata: '₹300',
+        description: roundTripTermText
+    },
+    {
+        name: 'Sedan',
+        type: 'Sedan (4+1)',
+        fuel: 'Petrol',
+        seats: 4,
+        luggage: 3,
+        price: '₹12',
+        bata: '₹300',
+        description: roundTripTermText
+    },
+    {
+        name: 'Etios',
+        type: 'Etios (4+1)',
+        fuel: 'Petrol',
+        seats: 5,
+        luggage: 3,
+        price: '₹13',
+        bata: '₹300',
+        description: roundTripTermText
+    },
+    {
+        name: 'Sedan (Non-CNG)',
+        type: 'Sedan (4+1)',
+        fuel: 'Petrol',
+        seats: 5,
+        luggage: 0,
+        price: '₹13',
+        bata: '₹300',
+        description: roundTripTermText
+    },
+    {
+        name: 'SUV',
+        type: 'SUV (7+1)',
+        fuel: 'Petrol',
+        seats: 8,
+        luggage: 4,
+        price: '₹16',
+        bata: '₹300',
+        description: roundTripTermText
+    },
+    {
+        name: 'Innova',
+        type: 'Innova (6+1)',
+        fuel: 'Petrol',
+        seats: 7,
+        luggage: 4,
+        price: '₹17',
+        bata: '₹300',
+        description: roundTripTermText
+    },
+    {
+        name: 'Innova Crysta',
+        type: 'Innova Crysta',
+        fuel: 'Diesel',
+        seats: 7,
+        luggage: 4,
+        price: '₹20',
+        bata: '₹300',
+        description: roundTripTermText
     },
 ];
 
@@ -133,16 +207,30 @@ export default function OfferingsPage() {
                 <div className={styles.features}>
                     <div className={styles.container}>
                         <div className={styles.titleSection}>
-                            <h2 className={styles.title}>Our Fleet</h2>
+                            <h2 className={styles.title}>Tariff Rates</h2>
                             <p className={styles.subtitle}>
-                                Choose from our wide range of comfortable and well-maintained vehicles.
+                                Select the tariff type that matches your journey.
                             </p>
                         </div>
 
-                        <div className={styles.grid} style={{ marginBottom: '4rem' }}>
-                            {fleet.map((item, index) => (
-                                <FleetCard key={index} {...item} />
-                            ))}
+                        <div className={styles.tariffGroup}>
+                            <h3 className={styles.tariffTitle}>One-Way Tariff</h3>
+                            <p className={styles.tariffSubtitle}>Ideal for point-to-point drops across cities.</p>
+                            <div className={styles.grid}>
+                                {oneWayFleet.map((item, index) => (
+                                    <FleetCard key={`oneway-${index}`} {...item} />
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className={styles.tariffGroup}>
+                            <h3 className={styles.tariffTitle}>Round-Trip Tariff</h3>
+                            <p className={styles.tariffSubtitle}>Best for multi-day travel and return journeys.</p>
+                            <div className={styles.grid}>
+                                {roundTripFleet.map((item, index) => (
+                                    <FleetCard key={`roundtrip-${index}`} {...item} />
+                                ))}
+                            </div>
                         </div>
 
                         <div className={styles.titleSection}>
