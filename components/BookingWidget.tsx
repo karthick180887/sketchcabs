@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import styles from './BookingWidget.module.css';
 import Button from './Button';
-import { User, Phone, MapPin, Calendar, Clock, Car, Loader2 } from 'lucide-react';
+import { User, Phone, MapPin, Calendar, Clock, Car, Loader2, CheckCircle2 } from 'lucide-react';
 
 // Fare rates per km for different car types
 const carRates: Record<string, { rate: number; minKm: number; bata: number }> = {
@@ -25,6 +25,7 @@ const BookingWidget: React.FC = () => {
     const [carType, setCarType] = useState('SEDAN');
     const [distance, setDistance] = useState('');
     const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
 
     const calculateFare = () => {
         const distanceKm = parseFloat(distance) || 0;
@@ -54,13 +55,17 @@ const BookingWidget: React.FC = () => {
     };
 
     const handleBook = async () => {
+        if (!name || !phone || !pickup || !drop) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
         setLoading(true);
         const fare = calculateFare();
         const distanceKm = parseFloat(distance) || 0;
 
-        // 1. Send notification to Telegram (Backend)
         try {
-            await fetch('/api/telegram-booking', {
+            const response = await fetch('/api/telegram-booking', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -75,35 +80,43 @@ const BookingWidget: React.FC = () => {
                     fare
                 })
             });
+
+            if (response.ok) {
+                setSuccess(true);
+                // Reset form optionally
+                // setName(''); setPhone(''); ...
+            } else {
+                alert('Something went wrong. Please try again.');
+            }
         } catch (error) {
             console.error('Failed to send Telegram notification', error);
-            // We continue to WhatsApp even if Telegram fails
+            alert('Failed to send request. Please check your connection.');
+        } finally {
+            setLoading(false);
         }
-
-        // 2. Open WhatsApp (Frontend)
-        const message = `ONE WAY TRIP ESTIMATION
-
-📍 Pickup: ${pickup}
-🎯 Drop: ${drop}
-🚙 Car Type: ${carType}
-📱 Phone: ${phone}
-📅 Date: ${date}
-🕐 Time: ${formatTime(time)}
-📏 Distance: ${distanceKm} km
-
-💰 Base Rate (${fare.chargeableKm}km): ₹${fare.baseFare}
-💰 Additional Fare: ₹${fare.additionalFare}
-💰 Beta Charge: ₹${fare.bata}
-💳 TOTAL AMOUNT: ₹${fare.total}
-
-🔗 Booking Request Generated
-👤 Name: ${name}
-📍 Route: ${pickup} → ${drop}`;
-
-        const url = `https://wa.me/919500889142?text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
-        setLoading(false);
     };
+
+    if (success) {
+        return (
+            <div className={styles.widget} style={{ alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
+                <div style={{ textAlign: 'center', padding: '2rem' }}>
+                    <CheckCircle2 size={64} className="text-green-500 mb-4 mx-auto" style={{ color: '#22c55e' }} />
+                    <h3 className={styles.headerTitle} style={{ marginBottom: '1rem' }}>Booking Request Sent!</h3>
+                    <p className={styles.headerSubtitle}>
+                        Thank you, {name}. We have received your request and will contact you shortly at {phone}.
+                    </p>
+                    <Button
+                        onClick={() => setSuccess(false)}
+                        variant="primary"
+                        size="md"
+                        style={{ marginTop: '2rem' }}
+                    >
+                        Book Another Trip
+                    </Button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.widget}>
