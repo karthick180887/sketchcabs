@@ -44,7 +44,10 @@ export async function POST(request: Request) {
 (Base: ₹${fare?.baseFare}, Bata: ₹${fare?.bata})
 `;
 
+
         const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        // Log environment (safely)
+        console.log(`Sending to Telegram. Token present: ${!!TELEGRAM_BOT_TOKEN}, ChatID: ${TELEGRAM_CHAT_ID}`);
 
         const response = await fetch(telegramUrl, {
             method: 'POST',
@@ -63,7 +66,7 @@ export async function POST(request: Request) {
         if (!data.ok) {
             console.error('Telegram API Error:', data);
             return NextResponse.json(
-                { error: 'Failed to send notification to Telegram' },
+                { error: 'Failed to send notification to Telegram', details: data },
                 { status: 500 }
             );
         }
@@ -72,7 +75,7 @@ export async function POST(request: Request) {
     } catch (error) {
         console.error('Error processing booking request:', error);
         return NextResponse.json(
-            { error: 'Internal Server Error' },
+            { error: 'Internal Server Error', details: error instanceof Error ? error.message : String(error) },
             { status: 500 }
         );
     }

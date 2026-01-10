@@ -86,7 +86,9 @@ const BookingWidget: React.FC = () => {
                 // Reset form optionally
                 // setName(''); setPhone(''); ...
             } else {
-                alert('Something went wrong. Please try again.');
+                const errorData = await response.json();
+                console.error('Booking Error:', errorData);
+                alert(`Error: ${errorData.error || 'Something went wrong'}. ${errorData.details ? JSON.stringify(errorData.details) : ''}`);
             }
         } catch (error) {
             console.error('Failed to send Telegram notification', error);
