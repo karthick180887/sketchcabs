@@ -18,8 +18,7 @@
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-google-autocomplete": "^2.7.5",
-    "shared-ui": "file:../shared-ui"
+    "react-google-autocomplete": "^2.7.5"
   },
   "devDependencies": {
     "@types/node": "^20",
