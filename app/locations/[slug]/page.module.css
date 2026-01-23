@@ -1,0 +1,149 @@
+.section {
+  padding: 6.5rem 0 2rem;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.hero {
+  padding: 3rem;
+  background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--background)));
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) * 2);
+  box-shadow: 0 24px 40px rgba(0, 0, 0, 0.25);
+  margin-bottom: 3rem;
+}
+
+.eyebrow {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: hsl(var(--muted-foreground));
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: hsl(var(--foreground));
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: hsl(var(--muted-foreground));
+  max-width: 720px;
+  line-height: 1.7;
+}
+
+.ctaRow {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.badges {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.badges span {
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  background: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.sectionBlock {
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: hsl(var(--foreground));
+}
+
+.sectionText {
+  color: hsl(var(--muted-foreground));
+  max-width: 780px;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.cardGrid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.card p {
+  color: hsl(var(--muted-foreground));
+  line-height: 1.6;
+}
+
+.detailGrid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.detailItem {
+  background: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.detailLabel {
+  display: inline-block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: hsl(var(--muted-foreground));
+  margin-bottom: 0.75rem;
+}
+
+.detailItem p {
+  color: hsl(var(--foreground));
+  line-height: 1.6;
+}
+
+.steps {
+  padding-left: 1.25rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 2rem;
+  }
+
+  .ctaRow {
+    flex-direction: column;
+  }
+}
