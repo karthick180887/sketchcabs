@@ -139,3 +139,45 @@ a.secondary {
     --button-secondary-border: #1a1a1a;
   }
 }
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.faqItem h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.faqItem p {
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--text-secondary);
+}
+
+.keywordGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.keywordLink {
+  display: block;
+  padding: 8px 12px;
+  background-color: var(--button-secondary-hover);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.keywordLink:hover {
+  background-color: var(--button-secondary-border);
+}

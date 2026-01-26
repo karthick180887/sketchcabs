@@ -1,15 +1,10 @@
 import { MetadataRoute } from 'next';
-import { keywordPages } from '@/lib/keywordPages';
+
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://sketchcabs.com';
 
-    const keywordUrls: MetadataRoute.Sitemap = keywordPages.map((page) => ({
-        url: `${baseUrl}/locations/${page.slug}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly',
-        priority: 0.6,
-    }));
+
 
     return [
         {
@@ -30,12 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'weekly',
             priority: 0.9,
         },
-        {
-            url: `${baseUrl}/locations`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
+
         {
             url: `${baseUrl}/blog`,
             lastModified: new Date(),
@@ -48,6 +38,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'yearly',
             priority: 0.8,
         },
-        ...keywordUrls,
+
     ];
 }
